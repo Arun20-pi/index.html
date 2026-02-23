@@ -1,0 +1,2067 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Universe — Top 10 AI Tools Explorer</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600;800&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #030712;
+    --surface: #0d1117;
+    --glass: rgba(255,255,255,0.04);
+    --border: rgba(255,255,255,0.08);
+    --accent1: #00f5ff;
+    --accent2: #ff00ff;
+    --accent3: #ffee00;
+    --text: #e2e8f0;
+    --muted: #64748b;
+    --glow1: rgba(0,245,255,0.3);
+    --glow2: rgba(255,0,255,0.3);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Exo 2', sans-serif;
+    overflow-x: hidden;
+    min-height: 100vh;
+    cursor: none;
+  }
+
+  /* CUSTOM CURSOR */
+  #cursor {
+    width: 12px; height: 12px;
+    background: var(--accent1);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 99999;
+    transition: transform 0.1s, background 0.2s;
+    box-shadow: 0 0 20px var(--accent1);
+  }
+  #cursor-ring {
+    width: 36px; height: 36px;
+    border: 1.5px solid var(--accent1);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 99998;
+    transition: transform 0.15s, left 0.08s, top 0.08s;
+    opacity: 0.6;
+  }
+
+  /* CANVAS BACKGROUND */
+  #bg-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* HEADER */
+  header {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 20px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(to bottom, rgba(3,7,18,0.95), transparent);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+  }
+  .logo-text {
+    font-family: 'Orbitron', monospace;
+    font-size: 1.4rem;
+    font-weight: 900;
+    background: linear-gradient(90deg, var(--accent1), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: 2px;
+  }
+  .header-badge {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--accent3);
+    border: 1px solid var(--accent3);
+    padding: 4px 12px;
+    border-radius: 20px;
+    animation: pulse-badge 2s ease-in-out infinite;
+  }
+  @keyframes pulse-badge {
+    0%,100% { opacity:1; box-shadow: 0 0 8px rgba(255,238,0,0.4); }
+    50% { opacity:0.7; box-shadow: 0 0 20px rgba(255,238,0,0.8); }
+  }
+
+  /* HERO */
+  #hero {
+    position: relative;
+    z-index: 10;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 120px 20px 60px;
+  }
+  .hero-tag {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--accent1);
+    letter-spacing: 4px;
+    margin-bottom: 20px;
+    animation: fadeDown 1s ease both;
+  }
+  .hero-title {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(2.5rem, 7vw, 6rem);
+    font-weight: 900;
+    line-height: 1.05;
+    margin-bottom: 24px;
+    animation: fadeDown 1s 0.2s ease both;
+  }
+  .hero-title span.c1 { color: var(--accent1); }
+  .hero-title span.c2 { color: var(--accent2); }
+  .hero-title span.c3 { color: var(--accent3); }
+  .hero-sub {
+    font-size: 1.15rem;
+    color: var(--muted);
+    max-width: 600px;
+    line-height: 1.7;
+    animation: fadeDown 1s 0.4s ease both;
+    margin-bottom: 40px;
+  }
+  .hero-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 32px;
+    background: linear-gradient(135deg, var(--accent1), var(--accent2));
+    color: #000;
+    font-family: 'Orbitron', monospace;
+    font-size: 0.85rem;
+    font-weight: 700;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    animation: fadeDown 1s 0.6s ease both;
+    transition: transform 0.2s, box-shadow 0.2s;
+    letter-spacing: 1px;
+  }
+  .hero-cta:hover { transform: scale(1.07); box-shadow: 0 0 30px var(--glow1); }
+  .scroll-hint {
+    margin-top: 60px;
+    animation: bounce 2s infinite, fadeDown 1s 1s ease both;
+    font-size: 0.75rem;
+    color: var(--muted);
+    letter-spacing: 2px;
+    font-family: 'Share Tech Mono', monospace;
+  }
+  .scroll-hint::after {
+    content: '';
+    display: block;
+    margin: 10px auto 0;
+    width: 2px;
+    height: 40px;
+    background: linear-gradient(to bottom, var(--accent1), transparent);
+  }
+  @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+  @keyframes fadeDown { from{opacity:0;transform:translateY(-30px)} to{opacity:1;transform:translateY(0)} }
+
+  /* STATS BAR */
+  .stats-bar {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    justify-content: center;
+    gap: 60px;
+    padding: 30px;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    background: var(--glass);
+    backdrop-filter: blur(20px);
+    flex-wrap: wrap;
+  }
+  .stat-item { text-align: center; }
+  .stat-num {
+    font-family: 'Orbitron', monospace;
+    font-size: 2rem;
+    font-weight: 900;
+    background: linear-gradient(90deg, var(--accent1), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .stat-label { font-size: 0.75rem; color: var(--muted); letter-spacing: 2px; margin-top: 4px; }
+
+  /* FLOATING LOGOS SECTION */
+  #floating-section {
+    position: relative;
+    z-index: 10;
+    padding: 80px 20px;
+    text-align: center;
+  }
+  .section-title {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(1.4rem, 4vw, 2.2rem);
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: var(--text);
+  }
+  .section-title .hl { color: var(--accent1); }
+  .section-sub {
+    font-size: 0.95rem;
+    color: var(--muted);
+    margin-bottom: 60px;
+    letter-spacing: 1px;
+  }
+
+  /* FLOATING ARENA */
+  #float-arena {
+    position: relative;
+    width: 100%;
+    max-width: 1100px;
+    height: 620px;
+    margin: 0 auto;
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    background: radial-gradient(ellipse at center, rgba(0,245,255,0.03) 0%, transparent 70%);
+    overflow: hidden;
+  }
+  .ai-orb {
+    position: absolute;
+    width: 110px; height: 110px;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+    user-select: none;
+    z-index: 5;
+  }
+  .ai-orb:hover {
+    transform: scale(1.2) !important;
+    z-index: 20;
+  }
+  .ai-orb .orb-bg {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    transition: all 0.3s;
+  }
+  .ai-orb .orb-icon {
+    font-size: 2.6rem;
+    position: relative;
+    z-index: 2;
+    filter: drop-shadow(0 0 10px currentColor);
+  }
+  .ai-orb .orb-name {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.58rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    position: relative;
+    z-index: 2;
+    margin-top: 4px;
+    color: #fff;
+    text-shadow: 0 0 10px rgba(255,255,255,0.5);
+  }
+  .ai-orb .orb-pulse {
+    position: absolute;
+    inset: -8px;
+    border-radius: 50%;
+    border: 2px solid;
+    animation: orb-pulse 2s ease-in-out infinite;
+    opacity: 0;
+  }
+  @keyframes orb-pulse {
+    0% { transform: scale(0.9); opacity: 0.7; }
+    100% { transform: scale(1.3); opacity: 0; }
+  }
+  .ai-orb .click-hint {
+    position: absolute;
+    bottom: -28px;
+    font-size: 0.6rem;
+    color: var(--accent1);
+    font-family: 'Share Tech Mono', monospace;
+    letter-spacing: 1px;
+    opacity: 0;
+    transition: opacity 0.3s;
+    white-space: nowrap;
+  }
+  .ai-orb:hover .click-hint { opacity: 1; }
+
+  /* Connection lines canvas */
+  #lines-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* MODAL */
+  #modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(3,7,18,0.85);
+    backdrop-filter: blur(12px);
+    z-index: 1000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    animation: fadeIn 0.3s ease;
+  }
+  #modal-overlay.active { display: flex; }
+  @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+
+  .modal-box {
+    background: #0d1117;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    max-width: 900px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    animation: modalSlide 0.4s cubic-bezier(0.34,1.56,0.64,1) both;
+  }
+  @keyframes modalSlide {
+    from { transform: scale(0.8) translateY(40px); opacity: 0; }
+    to { transform: scale(1) translateY(0); opacity: 1; }
+  }
+  .modal-box::-webkit-scrollbar { width: 6px; }
+  .modal-box::-webkit-scrollbar-track { background: transparent; }
+  .modal-box::-webkit-scrollbar-thumb { background: var(--accent1); border-radius: 3px; }
+
+  .modal-header {
+    padding: 40px 40px 30px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+  .modal-icon-wrap {
+    width: 80px; height: 80px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    flex-shrink: 0;
+  }
+  .modal-title-group { flex: 1; }
+  .modal-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 1.8rem;
+    font-weight: 900;
+    margin-bottom: 6px;
+  }
+  .modal-subtitle { font-size: 0.9rem; color: var(--muted); font-family: 'Share Tech Mono', monospace; }
+  .modal-close {
+    position: absolute;
+    top: 20px; right: 20px;
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: var(--glass);
+    color: var(--text);
+    cursor: pointer;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+  }
+  .modal-close:hover { background: var(--accent2); border-color: var(--accent2); color: #fff; }
+
+  .modal-body { padding: 30px 40px 40px; }
+
+  .modal-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+  }
+  .tab-btn {
+    padding: 8px 18px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    font-family: 'Exo 2', sans-serif;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+  .tab-btn.active, .tab-btn:hover {
+    border-color: var(--accent1);
+    color: var(--accent1);
+    background: rgba(0,245,255,0.08);
+  }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+
+  /* STRENGTH BARS */
+  .strength-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  @media(max-width:600px){.strength-grid{grid-template-columns:1fr;}}
+  .strength-item { background: var(--glass); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
+  .strength-label { font-size: 0.8rem; color: var(--muted); margin-bottom: 8px; font-family:'Share Tech Mono',monospace; letter-spacing:1px; }
+  .strength-bar-wrap { background: rgba(255,255,255,0.05); border-radius: 4px; height: 8px; overflow: hidden; }
+  .strength-bar { height: 100%; border-radius: 4px; width: 0; transition: width 1s cubic-bezier(0.4,0,0.2,1); }
+  .strength-value { font-family:'Orbitron',monospace; font-size:0.75rem; color:var(--text); margin-top:6px; float:right; }
+
+  /* AGENT CARDS */
+  .agents-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 14px; }
+  .agent-card {
+    background: var(--glass);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px 16px;
+    text-align: center;
+    transition: all 0.3s;
+    cursor: default;
+  }
+  .agent-card:hover {
+    border-color: var(--accent1);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 30px rgba(0,245,255,0.15);
+  }
+  .agent-icon { font-size: 2rem; margin-bottom: 10px; }
+  .agent-name { font-size: 0.8rem; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+  .agent-desc { font-size: 0.7rem; color: var(--muted); line-height: 1.5; }
+
+  /* CAPABILITY TAGS */
+  .cap-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+  .cap-tag {
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border: 1px solid;
+    transition: all 0.2s;
+  }
+  .cap-tag:hover { transform: scale(1.05); }
+
+  /* TASKS LIST */
+  .task-list { display: grid; gap: 10px; }
+  .task-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 14px 18px;
+    background: var(--glass);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    transition: all 0.3s;
+  }
+  .task-item:hover { border-color: var(--accent1); transform: translateX(6px); }
+  .task-num {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.7rem;
+    color: var(--accent1);
+    border: 1px solid var(--accent1);
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .task-text { font-size: 0.85rem; line-height: 1.6; color: var(--text); }
+
+  /* OVERVIEW CARD */
+  .overview-card {
+    background: linear-gradient(135deg, var(--glass), rgba(255,255,255,0.02));
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 24px;
+    line-height: 1.75;
+    font-size: 0.95rem;
+    color: #cbd5e1;
+  }
+  .key-facts { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px,1fr)); gap:12px; margin-top:20px; }
+  .key-fact {
+    background: var(--glass);
+    border: 1px solid var(--border);
+    border-radius:10px;
+    padding: 14px;
+    text-align:center;
+  }
+  .kf-val { font-family:'Orbitron',monospace; font-size:1.1rem; font-weight:700; }
+  .kf-label { font-size:0.7rem; color:var(--muted); margin-top:4px; letter-spacing:1px; }
+
+  /* ANIMATION / VISUAL TAB */
+  .visual-display {
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+    height: 280px;
+    position: relative;
+    margin-bottom: 20px;
+    background: #020509;
+  }
+  .visual-canvas-wrap { width:100%; height:100%; position:relative; }
+  .vcanvas { width:100%; height:100%; display:block; }
+
+  /* GRID CARDS BELOW */
+  #grid-section {
+    position: relative;
+    z-index: 10;
+    padding: 80px 40px;
+    max-width: 1300px;
+    margin: 0 auto;
+  }
+  .tools-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 20px;
+    margin-top: 50px;
+  }
+  .tool-card {
+    background: var(--glass);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .tool-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 0.3s;
+    border-radius: 16px;
+  }
+  .tool-card:hover { transform: translateY(-6px); }
+  .tool-card:hover::before { opacity: 1; }
+  .tc-header { display:flex; align-items:center; gap:16px; margin-bottom:16px; }
+  .tc-icon { font-size: 2.2rem; }
+  .tc-name { font-family:'Orbitron',monospace; font-size:0.95rem; font-weight:700; }
+  .tc-company { font-size:0.75rem; color:var(--muted); }
+  .tc-desc { font-size:0.82rem; color:#94a3b8; line-height:1.6; margin-bottom:16px; }
+  .tc-tags { display:flex; flex-wrap:wrap; gap:6px; }
+  .tc-tag { font-size:0.65rem; padding:3px 10px; border-radius:10px; font-weight:600; }
+  .tc-cta {
+    display:flex; align-items:center; gap:6px;
+    margin-top:16px;
+    font-size:0.75rem;
+    font-family:'Share Tech Mono',monospace;
+    opacity:0.6;
+    transition:opacity 0.2s;
+    letter-spacing:1px;
+  }
+  .tool-card:hover .tc-cta { opacity:1; }
+
+  /* FOOTER */
+  footer {
+    position: relative;
+    z-index: 10;
+    border-top: 1px solid var(--border);
+    padding: 40px;
+    text-align: center;
+  }
+  .footer-logo {
+    font-family: 'Orbitron', monospace;
+    font-size: 1.2rem;
+    font-weight: 900;
+    background: linear-gradient(90deg, var(--accent1), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 12px;
+  }
+  .footer-text { font-size: 0.8rem; color: var(--muted); line-height: 1.8; }
+  .footer-fresher {
+    margin-top: 20px;
+    display: inline-block;
+    padding: 8px 24px;
+    border: 1px solid var(--accent3);
+    border-radius: 20px;
+    font-family:'Share Tech Mono',monospace;
+    font-size:0.75rem;
+    color: var(--accent3);
+    letter-spacing: 2px;
+  }
+
+  /* PROMPT SECTION */
+  #prompt-section {
+    position: relative;
+    z-index: 10;
+    padding: 60px 40px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .prompt-box {
+    background: #0a0f1a;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 30px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.8rem;
+    line-height: 1.8;
+    color: #7dd3fc;
+    position: relative;
+  }
+  .prompt-label {
+    font-family:'Orbitron',monospace;
+    font-size:0.7rem;
+    color: var(--accent3);
+    letter-spacing:2px;
+    margin-bottom:12px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .prompt-label::before { content:''; display:inline-block; width:6px; height:6px; background:var(--accent3); border-radius:50%; animation:pulse-badge 1.5s infinite; }
+  .copy-btn {
+    position:absolute;
+    top:16px; right:16px;
+    padding:6px 14px;
+    background:var(--glass);
+    border:1px solid var(--border);
+    border-radius:8px;
+    color:var(--accent1);
+    font-size:0.75rem;
+    cursor:pointer;
+    font-family:'Share Tech Mono',monospace;
+    transition:all 0.2s;
+  }
+  .copy-btn:hover { background:rgba(0,245,255,0.1); }
+
+  /* SEARCH BAR */
+  .search-wrap {
+    position:relative;
+    z-index:10;
+    max-width:500px;
+    margin: 0 auto 40px;
+  }
+  .search-input {
+    width:100%;
+    padding:14px 50px 14px 20px;
+    background:var(--glass);
+    border:1px solid var(--border);
+    border-radius:50px;
+    color:var(--text);
+    font-family:'Exo 2',sans-serif;
+    font-size:0.9rem;
+    outline:none;
+    transition:border-color 0.2s, box-shadow 0.2s;
+  }
+  .search-input:focus { border-color:var(--accent1); box-shadow:0 0 20px rgba(0,245,255,0.15); }
+  .search-icon { position:absolute; right:18px; top:50%; transform:translateY(-50%); color:var(--accent1); pointer-events:none; }
+
+  /* COMPARE toggle */
+  .compare-strip {
+    position:fixed;
+    bottom:0; left:0; right:0;
+    z-index:500;
+    background:#0d1117;
+    border-top:1px solid var(--border);
+    padding:14px 40px;
+    display:none;
+    align-items:center;
+    gap:12px;
+    justify-content:space-between;
+  }
+  .compare-strip.visible { display:flex; }
+  .compare-items { display:flex; gap:10px; flex-wrap:wrap; }
+  .compare-item-tag {
+    padding:6px 14px;
+    background:rgba(0,245,255,0.1);
+    border:1px solid var(--accent1);
+    border-radius:20px;
+    font-size:0.8rem;
+    color:var(--accent1);
+    display:flex;
+    align-items:center;
+    gap:6px;
+  }
+  .compare-item-tag button { background:none; border:none; color:var(--accent2); cursor:pointer; font-size:1rem; line-height:1; }
+  .compare-btn {
+    padding:10px 24px;
+    background:linear-gradient(135deg,var(--accent1),var(--accent2));
+    border:none;
+    border-radius:20px;
+    font-family:'Orbitron',monospace;
+    font-size:0.75rem;
+    font-weight:700;
+    color:#000;
+    cursor:pointer;
+    transition:transform 0.2s;
+  }
+  .compare-btn:hover{transform:scale(1.05);}
+
+  /* COMPARE MODAL */
+  #compare-modal {
+    position:fixed;
+    inset:0;
+    background:rgba(3,7,18,0.9);
+    backdrop-filter:blur(12px);
+    z-index:2000;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+  }
+  #compare-modal.active{display:flex;}
+  .compare-box {
+    background:#0d1117;
+    border:1px solid var(--border);
+    border-radius:20px;
+    max-width:1000px;
+    width:100%;
+    max-height:90vh;
+    overflow-y:auto;
+    padding:40px;
+    position:relative;
+  }
+  .compare-table {
+    width:100%;
+    border-collapse:collapse;
+    margin-top:20px;
+  }
+  .compare-table th, .compare-table td {
+    padding:14px 18px;
+    text-align:left;
+    border-bottom:1px solid var(--border);
+    font-size:0.85rem;
+  }
+  .compare-table th {
+    font-family:'Orbitron',monospace;
+    font-size:0.75rem;
+    color:var(--accent1);
+    letter-spacing:1px;
+    border-bottom:2px solid var(--accent1);
+  }
+  .compare-table tr:hover td{background:var(--glass);}
+
+  /* GLITCH TEXT */
+  @keyframes glitch {
+    0%,100%{clip-path:inset(0 0 0 0);transform:translate(0)}
+    20%{clip-path:inset(30% 0 40% 0);transform:translate(-4px,2px)}
+    40%{clip-path:inset(60% 0 10% 0);transform:translate(4px,-2px)}
+    60%{clip-path:inset(10% 0 70% 0);transform:translate(-2px,3px)}
+    80%{clip-path:inset(80% 0 5% 0);transform:translate(3px,-1px)}
+  }
+
+  /* TOAST */
+  #toast {
+    position:fixed;
+    bottom:80px;
+    left:50%;
+    transform:translateX(-50%) translateY(20px);
+    background:linear-gradient(135deg,var(--accent1),var(--accent2));
+    color:#000;
+    padding:12px 24px;
+    border-radius:20px;
+    font-family:'Orbitron',monospace;
+    font-size:0.75rem;
+    font-weight:700;
+    z-index:9999;
+    opacity:0;
+    transition:all 0.3s;
+    pointer-events:none;
+  }
+  #toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+  /* LOADING */
+  #loader {
+    position:fixed;
+    inset:0;
+    background:var(--bg);
+    z-index:99999;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    transition:opacity 0.5s;
+  }
+  .loader-ring {
+    width:80px; height:80px;
+    border:3px solid var(--border);
+    border-top-color:var(--accent1);
+    border-right-color:var(--accent2);
+    border-radius:50%;
+    animation:spin 1s linear infinite;
+    margin-bottom:20px;
+  }
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .loader-text {
+    font-family:'Share Tech Mono',monospace;
+    font-size:0.8rem;
+    color:var(--accent1);
+    letter-spacing:3px;
+    animation:pulse-badge 1s infinite;
+  }
+</style>
+</head>
+<body>
+
+<!-- LOADER -->
+<div id="loader">
+  <div class="loader-ring"></div>
+  <div class="loader-text">INITIALIZING AI UNIVERSE...</div>
+</div>
+
+<!-- CUSTOM CURSOR -->
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<!-- BACKGROUND CANVAS -->
+<canvas id="bg-canvas"></canvas>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<!-- HEADER -->
+<header>
+  <div class="logo-text">⚡ AI UNIVERSE</div>
+  <div style="display:flex;gap:12px;align-items:center;">
+    <div class="header-badge">🟢 LIVE — 10 AI TOOLS</div>
+    <button onclick="toggleCompare()" style="background:var(--glass);border:1px solid var(--border);color:var(--text);padding:6px 14px;border-radius:20px;font-size:0.75rem;cursor:pointer;font-family:'Exo 2',sans-serif;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--accent1)'" onmouseout="this.style.borderColor='var(--border)'">⚖️ COMPARE</button>
+  </div>
+</header>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-tag">✦ FRESHER TO SENIOR — AI TOOLS MASTERY ✦</div>
+  <h1 class="hero-title">
+    <span class="c1">EXPLORE</span> THE<br>
+    <span class="c2">AI</span> <span class="c3">UNIVERSE</span>
+  </h1>
+  <p class="hero-sub">Discover the top 10 most powerful AI tools shaping our future. Click any floating orb to explore strengths, agents, capabilities &amp; use cases.</p>
+  <button class="hero-cta" onclick="document.getElementById('floating-section').scrollIntoView({behavior:'smooth'})">
+    🚀 EXPLORE NOW
+  </button>
+  <div class="scroll-hint">SCROLL TO EXPLORE</div>
+</section>
+
+<!-- STATS BAR -->
+<div class="stats-bar">
+  <div class="stat-item">
+    <div class="stat-num" id="cnt-tools">10</div>
+    <div class="stat-label">AI TOOLS</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num" id="cnt-agents">60+</div>
+    <div class="stat-label">AI AGENTS</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num" id="cnt-tasks">200+</div>
+    <div class="stat-label">TASKS COVERED</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num" id="cnt-users">500M+</div>
+    <div class="stat-label">GLOBAL USERS</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num" id="cnt-domains">15+</div>
+    <div class="stat-label">AI DOMAINS</div>
+  </div>
+</div>
+
+<!-- FLOATING LOGOS SECTION -->
+<section id="floating-section">
+  <h2 class="section-title">⚡ <span class="hl">FLOATING</span> AI ORBS</h2>
+  <p class="section-sub">Click any orb to unlock full details · Hover to reveal identity</p>
+
+  <div class="search-wrap">
+    <input class="search-input" type="text" id="search-input" placeholder="🔍 Search AI tools..." oninput="filterOrbs(this.value)">
+  </div>
+
+  <div id="float-arena">
+    <canvas id="lines-canvas"></canvas>
+    <!-- Orbs injected by JS -->
+  </div>
+</section>
+
+<!-- GRID CARDS -->
+<section id="grid-section">
+  <h2 class="section-title" style="text-align:center;">📋 <span class="hl">ALL TOOLS</span> — QUICK VIEW</h2>
+  <p class="section-sub" style="text-align:center;">Click any card for full analysis</p>
+  <div class="tools-grid" id="tools-grid"></div>
+</section>
+
+<!-- PROMPT SECTION -->
+<section id="prompt-section">
+  <h2 class="section-title" style="text-align:center;margin-bottom:30px;">💬 <span class="hl">PROMPT</span> USED TO BUILD THIS</h2>
+  <div class="prompt-box">
+    <div class="prompt-label">ORIGINAL PROMPT</div>
+    <button class="copy-btn" onclick="copyPrompt()">📋 Copy</button>
+    <span id="prompt-text">
+i need a mini website theme is from a fresher to seniors i need the prompt and output of it and now i need mini website which look highly dynamic front page of all top ai logos floats in my screen when i opend it , i need every top 10 ai tools logos when i click on it must show its strengths and its ai agents which animation pictures and its capability in ai domain and main tasks it will perform add lot more features remember i need prompt and output and i have to download it
+    </span>
+  </div>
+  <br>
+  <div class="prompt-box" style="margin-top:0;">
+    <div class="prompt-label">WHAT THIS GENERATES</div>
+    ✦ Animated particle canvas background with star field & nebula<br>
+    ✦ Custom neon cursor tracking<br>
+    ✦ 10 floating AI orbs with physics-based animation in an interactive arena<br>
+    ✦ Connection lines between orbs drawn on canvas<br>
+    ✦ Full-detail modal for each AI tool with tabs: Overview, Strengths, AI Agents, Capabilities, Tasks, Visual<br>
+    ✦ Animated capability bars with percentage scores<br>
+    ✦ AI Agent cards with icons and descriptions<br>
+    ✦ Capability tags with glow effects<br>
+    ✦ Main tasks list with hover animations<br>
+    ✦ Visual animation canvas unique per tool<br>
+    ✦ Quick-view grid cards<br>
+    ✦ Tool comparison feature (select up to 3)<br>
+    ✦ Search/filter functionality<br>
+    ✦ Fresher-to-Senior theme with Orbitron/Exo2 fonts<br>
+    ✦ Downloadable as single HTML file
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">⚡ AI UNIVERSE</div>
+  <div class="footer-text">Built for curious minds — from fresher to senior engineers<br>Explore, learn, and master the AI landscape</div>
+  <div class="footer-fresher">🎓 FRESHER → 🏆 SENIOR — YOUR AI JOURNEY STARTS HERE</div>
+</footer>
+
+<!-- MODAL -->
+<div id="modal-overlay" onclick="closeModal(event)">
+  <div class="modal-box" id="modal-box">
+    <div class="modal-header" id="modal-header">
+      <div class="modal-icon-wrap" id="modal-icon-wrap"></div>
+      <div class="modal-title-group">
+        <div class="modal-title" id="modal-title"></div>
+        <div class="modal-subtitle" id="modal-subtitle"></div>
+      </div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-tabs" id="modal-tabs">
+        <button class="tab-btn active" onclick="switchTab('overview',this)">🌐 Overview</button>
+        <button class="tab-btn" onclick="switchTab('strengths',this)">💪 Strengths</button>
+        <button class="tab-btn" onclick="switchTab('agents',this)">🤖 AI Agents</button>
+        <button class="tab-btn" onclick="switchTab('capabilities',this)">⚡ Capabilities</button>
+        <button class="tab-btn" onclick="switchTab('tasks',this)">📋 Main Tasks</button>
+        <button class="tab-btn" onclick="switchTab('visual',this)">🎨 Visual</button>
+      </div>
+      <div class="tab-content active" id="tab-overview"></div>
+      <div class="tab-content" id="tab-strengths"></div>
+      <div class="tab-content" id="tab-agents"></div>
+      <div class="tab-content" id="tab-capabilities"></div>
+      <div class="tab-content" id="tab-tasks"></div>
+      <div class="tab-content" id="tab-visual"></div>
+    </div>
+  </div>
+</div>
+
+<!-- COMPARE STRIP -->
+<div class="compare-strip" id="compare-strip">
+  <div>
+    <div style="font-family:'Orbitron',monospace;font-size:0.7rem;color:var(--accent1);letter-spacing:1px;margin-bottom:6px;">COMPARING</div>
+    <div class="compare-items" id="compare-items"></div>
+  </div>
+  <button class="compare-btn" onclick="showComparison()">⚖️ COMPARE NOW</button>
+</div>
+
+<!-- COMPARE MODAL -->
+<div id="compare-modal" onclick="closeCompareModal(event)">
+  <div class="compare-box">
+    <button class="modal-close" onclick="closeCompareModal()" style="position:absolute;top:16px;right:16px;">✕</button>
+    <h2 style="font-family:'Orbitron',monospace;font-size:1.4rem;margin-bottom:20px;color:var(--accent1);">⚖️ AI TOOL COMPARISON</h2>
+    <div id="compare-content"></div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════
+//         AI TOOLS DATA
+// ═══════════════════════════════════════
+const AI_TOOLS = [
+  {
+    id: 'chatgpt',
+    name: 'ChatGPT',
+    company: 'OpenAI',
+    icon: '🤖',
+    color: '#10a37f',
+    color2: '#0d8c6e',
+    users: '180M+',
+    launched: '2022',
+    type: 'Conversational AI',
+    overview: 'ChatGPT is the world\'s most widely used AI assistant, powered by GPT-4 and beyond. It excels at natural conversation, writing assistance, code generation, analysis, and creative tasks. It set the benchmark for modern AI assistants and democratized access to large language models.',
+    facts: [{ val:'GPT-4o', label:'LATEST MODEL'},{val:'180M+',label:'MONTHLY USERS'},{val:'2022',label:'LAUNCHED'},{val:'100+',label:'LANGUAGES'}],
+    strengths: [
+      { label:'Natural Language Understanding', val:97 },
+      { label:'Code Generation', val:92 },
+      { label:'Creative Writing', val:94 },
+      { label:'Reasoning & Logic', val:93 },
+      { label:'Multi-modal (Vision)', val:90 },
+      { label:'Context Window', val:85 },
+    ],
+    agents: [
+      { icon:'✍️', name:'Writer Agent', desc:'Drafts essays, emails, blogs & creative content' },
+      { icon:'💻', name:'Code Agent', desc:'Writes, debugs & explains code in 20+ languages' },
+      { icon:'🔬', name:'Research Agent', desc:'Analyzes documents and synthesizes information' },
+      { icon:'🎨', name:'DALL·E Agent', desc:'Generates images from text prompts' },
+      { icon:'📊', name:'Data Agent', desc:'Analyzes data, creates charts & insights' },
+      { icon:'🌐', name:'Browse Agent', desc:'Searches the web for real-time information' },
+    ],
+    capabilities: [
+      { label:'Text Generation', color:'#10a37f' },
+      { label:'Code Generation', color:'#0ea5e9' },
+      { label:'Image Generation', color:'#8b5cf6' },
+      { label:'Data Analysis', color:'#f59e0b' },
+      { label:'Web Browsing', color:'#ef4444' },
+      { label:'Multi-turn Conversation', color:'#10b981' },
+      { label:'Plugin Ecosystem', color:'#6366f1' },
+      { label:'Voice Mode', color:'#ec4899' },
+    ],
+    tasks: ['Write professional emails, cover letters, and business documents','Generate and debug code in Python, JavaScript, C++, and 20+ languages','Analyze uploaded PDFs, spreadsheets, and research papers','Create detailed business plans and marketing strategies','Explain complex technical concepts in simple terms','Generate images with DALL·E 3 integration','Browse the web and summarize real-time information','Translate content across 100+ languages','Assist with math, statistics, and scientific problems','Build custom GPTs for specialized workflows'],
+    visualType: 'neural',
+    tags: ['Conversational','Multimodal','Code','Creative']
+  },
+  {
+    id: 'claude',
+    name: 'Claude',
+    company: 'Anthropic',
+    icon: '🧠',
+    color: '#d97757',
+    color2: '#c4623d',
+    users: '50M+',
+    launched: '2023',
+    type: 'Constitutional AI',
+    overview: 'Claude by Anthropic is a safety-focused AI assistant renowned for its exceptional long-context understanding, nuanced reasoning, and alignment with human values. Claude 3.5 Sonnet set benchmarks in coding, analysis, and instruction-following. Built with Constitutional AI principles.',
+    facts: [{val:'Claude 3.5',label:'LATEST MODEL'},{val:'200K',label:'TOKEN WINDOW'},{val:'2023',label:'LAUNCHED'},{val:'Safety-First',label:'APPROACH'}],
+    strengths: [
+      { label:'Long Context Understanding', val:99 },
+      { label:'Safety & Alignment', val:99 },
+      { label:'Code Generation', val:95 },
+      { label:'Analysis & Reasoning', val:97 },
+      { label:'Creative Writing', val:95 },
+      { label:'Instruction Following', val:98 },
+    ],
+    agents: [
+      { icon:'🔍', name:'Analyst Agent', desc:'Deep document analysis with 200K context window' },
+      { icon:'💻', name:'Coder Agent', desc:'State-of-art coding with artifacts & preview' },
+      { icon:'🛡️', name:'Safety Agent', desc:'Constitutional AI for aligned responses' },
+      { icon:'📝', name:'Writing Agent', desc:'Long-form, nuanced, creative writing' },
+      { icon:'🧮', name:'Math Agent', desc:'Complex mathematical reasoning & proofs' },
+      { icon:'🌐', name:'Research Agent', desc:'Synthesizes complex multi-document research' },
+    ],
+    capabilities: [
+      { label:'200K Context Window', color:'#d97757' },
+      { label:'Constitutional AI Safety', color:'#f59e0b' },
+      { label:'Advanced Coding', color:'#0ea5e9' },
+      { label:'Document Analysis', color:'#10b981' },
+      { label:'Creative Writing', color:'#8b5cf6' },
+      { label:'Nuanced Reasoning', color:'#ef4444' },
+      { label:'API Access', color:'#6366f1' },
+    ],
+    tasks: ['Analyze massive legal documents, books, or codebases in one session','Generate production-ready code with real-time preview artifacts','Conduct deep research synthesis across multiple documents','Write nuanced essays, reports, and long-form content','Assist with complex mathematical proofs and derivations','Debug intricate software systems and architecture','Create educational content from beginner to expert level','Evaluate ethical implications of AI decisions','Build sophisticated conversational AI pipelines','Assist with data science and ML workflows'],
+    visualType: 'wave',
+    tags: ['Safety','Long-Context','Analysis','Coding']
+  },
+  {
+    id: 'gemini',
+    name: 'Gemini',
+    company: 'Google DeepMind',
+    icon: '✨',
+    color: '#4285f4',
+    color2: '#1a73e8',
+    users: '100M+',
+    launched: '2023',
+    type: 'Multimodal AI',
+    overview: 'Google Gemini is a natively multimodal AI model that processes text, images, audio, video, and code simultaneously. Deeply integrated into Google\'s ecosystem (Search, Workspace, Android), it provides unmatched real-time information access and multimodal reasoning capabilities.',
+    facts: [{val:'Gemini 2.0',label:'LATEST MODEL'},{val:'2M Tokens',label:'CONTEXT WINDOW'},{val:'2023',label:'LAUNCHED'},{val:'Google Eco',label:'INTEGRATION'}],
+    strengths: [
+      { label:'Multimodal Reasoning', val:98 },
+      { label:'Real-time Web Access', val:99 },
+      { label:'Google Workspace Integration', val:99 },
+      { label:'Code Generation', val:91 },
+      { label:'Long Video Understanding', val:95 },
+      { label:'Scientific Reasoning', val:94 },
+    ],
+    agents: [
+      { icon:'🎥', name:'Video Agent', desc:'Understands and analyzes long videos natively' },
+      { icon:'🔊', name:'Audio Agent', desc:'Processes and transcribes audio content' },
+      { icon:'🌏', name:'Search Agent', desc:'Real-time Google Search integration' },
+      { icon:'📊', name:'Workspace Agent', desc:'Embedded in Google Docs, Sheets & Slides' },
+      { icon:'🔭', name:'Science Agent', desc:'Solves complex scientific & math problems' },
+      { icon:'💻', name:'Code Agent', desc:'Runs code in multiple environments' },
+    ],
+    capabilities: [
+      { label:'Native Multimodal', color:'#4285f4' },
+      { label:'1M Token Context', color:'#34a853' },
+      { label:'Real-time Search', color:'#ea4335' },
+      { label:'Video Understanding', color:'#fbbc05' },
+      { label:'Google Workspace', color:'#4285f4' },
+      { label:'Audio Processing', color:'#00bcd4' },
+      { label:'Code Execution', color:'#8b5cf6' },
+    ],
+    tasks: ['Analyze entire movies, lectures, or video content','Understand complex diagrams, charts, and scientific images','Integrate AI into Google Docs, Sheets, and Gmail natively','Generate code and execute it in sandboxed environments','Answer questions with real-time Google Search grounding','Process and analyze audio recordings and podcasts','Reason across text, images, audio, and video simultaneously','Assist with Google Cloud and enterprise workflows','Solve olympiad-level math and science problems','Power Google Bard and AI Overviews in Search'],
+    visualType: 'grid',
+    tags: ['Multimodal','Google','Real-time','Video']
+  },
+  {
+    id: 'copilot',
+    name: 'Copilot',
+    company: 'Microsoft + OpenAI',
+    icon: '🪟',
+    color: '#00b4d8',
+    color2: '#0096c7',
+    users: '77M+',
+    launched: '2023',
+    type: 'Productivity AI',
+    overview: 'Microsoft Copilot is the AI assistant deeply embedded in the Microsoft 365 ecosystem — Word, Excel, PowerPoint, Teams, Outlook, and Windows itself. Powered by GPT-4, it transforms workplace productivity by automating documentation, data analysis, meeting summaries, and creative work.',
+    facts: [{val:'GPT-4o',label:'POWERED BY'},{val:'M365 Suite',label:'INTEGRATION'},{val:'2023',label:'LAUNCHED'},{val:'Enterprise',label:'FOCUS'}],
+    strengths: [
+      { label:'Microsoft 365 Integration', val:99 },
+      { label:'Enterprise Security', val:98 },
+      { label:'Meeting Summarization', val:96 },
+      { label:'Excel & Data Analysis', val:94 },
+      { label:'Code Generation (GitHub)', val:96 },
+      { label:'Document Generation', val:95 },
+    ],
+    agents: [
+      { icon:'📝', name:'Word Agent', desc:'Drafts, rewrites, and formats Word documents' },
+      { icon:'📊', name:'Excel Agent', desc:'Analyzes data, writes formulas & creates charts' },
+      { icon:'📽️', name:'PowerPoint Agent', desc:'Creates full presentations from prompts' },
+      { icon:'📧', name:'Outlook Agent', desc:'Drafts emails & summarizes threads' },
+      { icon:'🤝', name:'Teams Agent', desc:'Meeting notes, summaries & action items' },
+      { icon:'💻', name:'GitHub Copilot', desc:'AI pair programmer for code completion' },
+    ],
+    capabilities: [
+      { label:'M365 Native Integration', color:'#00b4d8' },
+      { label:'GitHub Copilot', color:'#171515' },
+      { label:'Meeting Intelligence', color:'#7b2d8b' },
+      { label:'Enterprise Security', color:'#00b4d8' },
+      { label:'Excel Analytics', color:'#217346' },
+      { label:'PowerPoint Designer', color:'#d04423' },
+      { label:'Outlook Intelligence', color:'#0078d4' },
+    ],
+    tasks: ['Auto-generate complete PowerPoint presentations from a brief','Analyze Excel data and produce executive summaries','Summarize hours of Teams meeting recordings instantly','Draft professional emails based on conversation context','Write, refactor, and document code in any language','Create Word documents from notes or voice recordings','Search across all company documents and emails','Build Power Automate workflows with AI assistance','Generate SQL queries and analyze Business Intelligence dashboards','Secure enterprise AI with Azure compliance and governance'],
+    visualType: 'hexagon',
+    tags: ['Enterprise','M365','Productivity','Code']
+  },
+  {
+    id: 'midjourney',
+    name: 'Midjourney',
+    company: 'Midjourney Inc.',
+    icon: '🎨',
+    color: '#ff6b6b',
+    color2: '#e63946',
+    users: '20M+',
+    launched: '2022',
+    type: 'Image Generation AI',
+    overview: 'Midjourney is the gold standard for AI image generation, renowned for its stunning artistic quality, coherent compositions, and unique aesthetic sensibility. Used by artists, designers, filmmakers, and creatives worldwide to generate professional-grade visual content from text descriptions.',
+    facts: [{val:'V7',label:'LATEST MODEL'},{val:'2022',label:'LAUNCHED'},{val:'Discord',label:'PLATFORM'},{val:'Photorealistic',label:'OUTPUT'}],
+    strengths: [
+      { label:'Artistic Quality', val:99 },
+      { label:'Photorealism', val:97 },
+      { label:'Style Consistency', val:96 },
+      { label:'Creative Composition', val:98 },
+      { label:'Character Design', val:94 },
+      { label:'Environmental Art', val:97 },
+    ],
+    agents: [
+      { icon:'🖼️', name:'Imagine Agent', desc:'Generates stunning images from text prompts' },
+      { icon:'🔄', name:'Variation Agent', desc:'Creates multiple stylistic variations' },
+      { icon:'⬆️', name:'Upscale Agent', desc:'Enhances resolution to ultra-HD quality' },
+      { icon:'🎭', name:'Style Agent', desc:'Applies specific artistic styles and aesthetics' },
+      { icon:'👤', name:'Character Agent', desc:'Creates consistent character designs' },
+      { icon:'🌍', name:'World Agent', desc:'Builds complete environmental scenes' },
+    ],
+    capabilities: [
+      { label:'Text-to-Image', color:'#ff6b6b' },
+      { label:'Image-to-Image', color:'#f9c74f' },
+      { label:'Style Transfer', color:'#90be6d' },
+      { label:'Character Design', color:'#43aa8b' },
+      { label:'Photorealism', color:'#577590' },
+      { label:'Ultra-HD Upscale', color:'#f3722c' },
+      { label:'Inpainting/Outpainting', color:'#8b5cf6' },
+    ],
+    tasks: ['Generate photorealistic product renders for e-commerce','Create concept art for game characters and environments','Design book covers, posters, and marketing materials','Generate architectural visualizations and interior designs','Create unique illustrations for articles and presentations','Produce consistent brand visuals and visual identities','Generate storyboards and concept frames for filmmaking','Design custom avatars, profile pictures, and NFT art','Create fashion design concepts and textile patterns','Visualize architectural projects and urban planning concepts'],
+    visualType: 'particles',
+    tags: ['Image Gen','Art','Design','Creative']
+  },
+  {
+    id: 'perplexity',
+    name: 'Perplexity',
+    company: 'Perplexity AI',
+    icon: '🔍',
+    color: '#20c997',
+    color2: '#12b886',
+    users: '15M+',
+    launched: '2022',
+    type: 'AI Search Engine',
+    overview: 'Perplexity is the AI-native search engine that answers questions with cited, real-time sources. Unlike traditional search engines, it provides direct, comprehensive answers with inline citations, making it ideal for research, fact-checking, and academic work. Supports multiple AI models.',
+    facts: [{val:'Real-time',label:'WEB ACCESS'},{val:'Cited',label:'SOURCES'},{val:'2022',label:'LAUNCHED'},{val:'Multi-LLM',label:'BACKEND'}],
+    strengths: [
+      { label:'Real-time Information', val:99 },
+      { label:'Source Citation', val:99 },
+      { label:'Research Quality', val:97 },
+      { label:'Fact Accuracy', val:96 },
+      { label:'Query Understanding', val:95 },
+      { label:'Multi-model Support', val:92 },
+    ],
+    agents: [
+      { icon:'🌐', name:'Web Search Agent', desc:'Searches and synthesizes real-time web data' },
+      { icon:'📚', name:'Academic Agent', desc:'Accesses scholarly papers and research' },
+      { icon:'📰', name:'News Agent', desc:'Aggregates and summarizes breaking news' },
+      { icon:'🖼️', name:'Image Search Agent', desc:'Searches and displays relevant images' },
+      { icon:'📱', name:'Social Agent', desc:'Monitors Reddit, YouTube & social media' },
+      { icon:'🎯', name:'Focus Agent', desc:'Narrows search to specific domains' },
+    ],
+    capabilities: [
+      { label:'Real-time Web Search', color:'#20c997' },
+      { label:'Academic Research', color:'#0ea5e9' },
+      { label:'Source Citation', color:'#f59e0b' },
+      { label:'News Aggregation', color:'#ef4444' },
+      { label:'Multi-LLM Backend', color:'#8b5cf6' },
+      { label:'Image Search', color:'#ec4899' },
+    ],
+    tasks: ['Research any topic with cited, verifiable sources','Stay updated on breaking news with AI-synthesized summaries','Find and summarize academic papers and studies','Compare products, prices, and reviews from multiple sources','Fact-check claims with real-time web verification','Research companies, people, and events comprehensively','Monitor specific topics with Pro Search capabilities','Access YouTube transcripts and Reddit discussions','Generate research reports with automatic citations','Answer complex multi-part questions with sub-questions'],
+    visualType: 'orbit',
+    tags: ['Search','Research','Real-time','Citations']
+  },
+  {
+    id: 'grok',
+    name: 'Grok',
+    company: 'xAI (Elon Musk)',
+    icon: '🌌',
+    color: '#ff4d6d',
+    color2: '#c9184a',
+    users: '10M+',
+    launched: '2023',
+    type: 'Rebel AI Assistant',
+    overview: 'Grok is xAI\'s irreverent, witty AI assistant with real-time access to X (Twitter) data and a unique personality that sets it apart. Known for its humor, willingness to tackle controversial topics, and uncensored approach to answering questions. Integrated directly into the X platform.',
+    facts: [{val:'Grok-3',label:'LATEST MODEL'},{val:'X/Twitter',label:'REAL-TIME DATA'},{val:'2023',label:'LAUNCHED'},{val:'Uncensored',label:'STYLE'}],
+    strengths: [
+      { label:'X/Twitter Real-time Data', val:99 },
+      { label:'Uncensored Responses', val:95 },
+      { label:'Humor & Personality', val:97 },
+      { label:'Code Generation', val:92 },
+      { label:'Reasoning (Grok-3)', val:95 },
+      { label:'Trend Analysis', val:96 },
+    ],
+    agents: [
+      { icon:'🐦', name:'X Monitor Agent', desc:'Monitors X trends and viral content in real-time' },
+      { icon:'😂', name:'Comedy Agent', desc:'Injects humor and wit into responses' },
+      { icon:'💻', name:'Code Agent', desc:'Generates and debugs code with personality' },
+      { icon:'📈', name:'Trend Agent', desc:'Analyzes social media trends and sentiment' },
+      { icon:'🗣️', name:'Debate Agent', desc:'Engages with controversial topics openly' },
+      { icon:'🔮', name:'Think Agent', desc:'Extended reasoning for complex problems' },
+    ],
+    capabilities: [
+      { label:'X/Twitter Integration', color:'#ff4d6d' },
+      { label:'Real-time Social Data', color:'#f9c74f' },
+      { label:'Uncensored Mode', color:'#ef4444' },
+      { label:'Humor Generation', color:'#fb5607' },
+      { label:'Trend Analysis', color:'#3a86ff' },
+      { label:'Extended Thinking', color:'#8b5cf6' },
+    ],
+    tasks: ['Monitor X/Twitter for breaking news and trending topics','Get unfiltered answers to controversial or edgy questions','Generate witty, humorous content for social media','Analyze sentiment across social media platforms','Discuss politically sensitive topics with minimal censorship','Access real-time public opinion on current events','Generate memes, jokes, and viral-style content','Analyze financial markets using social sentiment data','Research public figures via their X activity','Brainstorm creative, unconventional ideas and solutions'],
+    visualType: 'starfield',
+    tags: ['Social','Real-time','Edgy','X/Twitter']
+  },
+  {
+    id: 'llama',
+    name: 'Llama',
+    company: 'Meta AI',
+    icon: '🦙',
+    color: '#0668e1',
+    color2: '#0064d1',
+    users: 'Millions (OSS)',
+    launched: '2023',
+    type: 'Open Source LLM',
+    overview: 'Meta\'s Llama is the world\'s leading open-source large language model family, downloaded hundreds of millions of times. It empowers developers, researchers, and enterprises to build custom AI applications without API costs, with full control over the model and data privacy.',
+    facts: [{val:'Llama 3.3',label:'LATEST MODEL'},{val:'Open Source',label:'LICENSE'},{val:'2023',label:'LAUNCHED'},{val:'500M+',label:'DOWNLOADS'}],
+    strengths: [
+      { label:'Open Source & Free', val:100 },
+      { label:'Data Privacy (Self-hosted)', val:100 },
+      { label:'Fine-tuning Flexibility', val:99 },
+      { label:'Code Generation', val:93 },
+      { label:'Multilingual', val:92 },
+      { label:'Reasoning (405B)', val:94 },
+    ],
+    agents: [
+      { icon:'🔓', name:'Open Agent', desc:'Fully open, self-hosted AI deployment' },
+      { icon:'🔧', name:'Fine-tune Agent', desc:'Custom model training on your own data' },
+      { icon:'🛡️', name:'Privacy Agent', desc:'On-premise deployment for full data control' },
+      { icon:'💻', name:'Code Agent', desc:'Code generation without API costs' },
+      { icon:'🌐', name:'Deploy Agent', desc:'Deploy on any cloud, edge, or local device' },
+      { icon:'🧪', name:'Research Agent', desc:'State-of-the-art research platform' },
+    ],
+    capabilities: [
+      { label:'Fully Open Source', color:'#0668e1' },
+      { label:'On-Premise Deployment', color:'#10b981' },
+      { label:'Custom Fine-tuning', color:'#f59e0b' },
+      { label:'Edge Deployment', color:'#ef4444' },
+      { label:'Multilingual Support', color:'#8b5cf6' },
+      { label:'Commercial Use (Free)', color:'#ec4899' },
+      { label:'Hugging Face Integration', color:'#ff9d00' },
+    ],
+    tasks: ['Deploy AI locally without sending data to third-party APIs','Fine-tune on proprietary company data for custom assistants','Build cost-free AI applications at enterprise scale','Research and experiment with LLM architectures','Create privacy-compliant AI for healthcare and legal sectors','Deploy AI on edge devices and mobile platforms','Build multilingual AI applications for global markets','Develop custom AI chatbots without recurring API costs','Run AI inference in air-gapped secure environments','Contribute to the open-source AI research community'],
+    visualType: 'flow',
+    tags: ['Open Source','Privacy','Fine-tuning','Free']
+  },
+  {
+    id: 'runway',
+    name: 'Runway',
+    company: 'Runway ML',
+    icon: '🎬',
+    color: '#7c3aed',
+    color2: '#6d28d9',
+    users: '5M+',
+    launched: '2022',
+    type: 'AI Video Generation',
+    overview: 'Runway is the premier AI platform for creative video generation, offering text-to-video, image-to-video, and video editing capabilities that are revolutionizing filmmaking, content creation, and visual effects. Gen-3 Alpha produces stunning, cinematic quality video content.',
+    facts: [{val:'Gen-3 Alpha',label:'LATEST MODEL'},{val:'Video AI',label:'SPECIALTY'},{val:'2022',label:'LAUNCHED'},{val:'Hollywood',label:'ADOPTION'}],
+    strengths: [
+      { label:'Text-to-Video Quality', val:98 },
+      { label:'Motion Consistency', val:96 },
+      { label:'Cinematic Rendering', val:97 },
+      { label:'Creative Control', val:95 },
+      { label:'Video Editing AI', val:94 },
+      { label:'VFX Generation', val:93 },
+    ],
+    agents: [
+      { icon:'🎥', name:'Gen-3 Agent', desc:'Generates cinematic video from text descriptions' },
+      { icon:'🖼️', name:'Image-to-Video Agent', desc:'Animates still images into dynamic videos' },
+      { icon:'✂️', name:'Edit Agent', desc:'AI-powered video editing and compositing' },
+      { icon:'🌊', name:'Motion Brush Agent', desc:'Controls motion in specific video regions' },
+      { icon:'🎭', name:'Act-One Agent', desc:'Character animation from video reference' },
+      { icon:'🔊', name:'Audio Agent', desc:'Generates synchronized audio for videos' },
+    ],
+    capabilities: [
+      { label:'Text-to-Video Gen-3', color:'#7c3aed' },
+      { label:'Image-to-Video', color:'#db2777' },
+      { label:'Motion Brush', color:'#0ea5e9' },
+      { label:'Video Editing', color:'#f59e0b' },
+      { label:'VFX Generation', color:'#10b981' },
+      { label:'Character Animation', color:'#ef4444' },
+      { label:'Audio Generation', color:'#6366f1' },
+    ],
+    tasks: ['Generate short cinematic film clips from text descriptions','Animate product photos for e-commerce and advertising','Create visual effects for films and TV productions without CGI teams','Produce social media video content at unprecedented speed','Generate music video concepts and visual accompaniments','Create educational animation content from scripts','Prototype film scenes before production begins','Build animated marketing videos from static brand assets','Generate news visualization and explainer videos','Create immersive virtual worlds and game cinematics'],
+    visualType: 'video',
+    tags: ['Video Gen','Film','VFX','Creative']
+  },
+  {
+    id: 'stable-diffusion',
+    name: 'Stable Diff.',
+    company: 'Stability AI',
+    icon: '🌀',
+    color: '#06d6a0',
+    color2: '#05c28f',
+    users: '10M+',
+    launched: '2022',
+    type: 'Open Image AI',
+    overview: 'Stable Diffusion is the pioneering open-source image generation model that democratized AI art creation. Available freely for self-hosting, it powers thousands of applications and websites. Its flexibility through LoRA, ControlNet, and custom checkpoints makes it infinitely customizable.',
+    facts: [{val:'SDXL 3.5',label:'LATEST MODEL'},{val:'Open Source',label:'LICENSE'},{val:'2022',label:'LAUNCHED'},{val:'Unlimited',label:'CUSTOMIZATION'}],
+    strengths: [
+      { label:'Open Source Freedom', val:100 },
+      { label:'Customization (LoRA)', val:99 },
+      { label:'Community Models', val:99 },
+      { label:'Local Deployment', val:100 },
+      { label:'Image Quality', val:94 },
+      { label:'ControlNet Precision', val:97 },
+    ],
+    agents: [
+      { icon:'🎨', name:'txt2img Agent', desc:'Text to image generation with infinite styles' },
+      { icon:'🔄', name:'img2img Agent', desc:'Transform existing images with AI' },
+      { icon:'🎛️', name:'ControlNet Agent', desc:'Precise control over image composition' },
+      { icon:'🧩', name:'LoRA Agent', desc:'Custom style training with small datasets' },
+      { icon:'✏️', name:'Inpaint Agent', desc:'Edit specific parts of images seamlessly' },
+      { icon:'🌐', name:'API Agent', desc:'Integrate SD into any application' },
+    ],
+    capabilities: [
+      { label:'Fully Open Source', color:'#06d6a0' },
+      { label:'LoRA Fine-tuning', color:'#f59e0b' },
+      { label:'ControlNet', color:'#ef4444' },
+      { label:'Local GPU Inference', color:'#0ea5e9' },
+      { label:'Community Models (CivitAI)', color:'#ec4899' },
+      { label:'Custom Checkpoints', color:'#8b5cf6' },
+      { label:'API & ComfyUI Integration', color:'#10b981' },
+    ],
+    tasks: ['Generate AI art locally without cloud costs or censorship','Fine-tune image styles with custom LoRA models','Precisely control image composition with ControlNet skeletons','Edit and inpaint specific regions of photographs','Create consistent character designs across multiple images','Generate product mockups and industrial design concepts','Build AI art applications with local API integration','Train custom models on proprietary brand aesthetics','Generate NSFW content for appropriate adult platforms','Create unlimited variations of design assets at zero cost'],
+    visualType: 'spiral',
+    tags: ['Open Source','Image Gen','LoRA','Local']
+  }
+];
+
+// ═══════════════════════════════════════
+//       ANIMATION POSITIONS FOR ORBS
+// ═══════════════════════════════════════
+const ORB_POSITIONS = [
+  { left:8, top:10, animDur:4.1 },
+  { left:40, top:5, animDur:5.3 },
+  { left:75, top:8, animDur:3.8 },
+  { left:85, top:35, animDur:6.1 },
+  { left:70, top:65, animDur:4.7 },
+  { left:40, top:75, animDur:5.0 },
+  { left:10, top:65, animDur:3.5 },
+  { left:5, top:35, animDur:4.9 },
+  { left:25, top:40, animDur:5.5 },
+  { left:60, top:38, animDur:4.3 },
+];
+
+let compareList = [];
+let activeOrbAnimations = [];
+
+// ═══════════════════════════════════════
+//         BACKGROUND CANVAS
+// ═══════════════════════════════════════
+function initBgCanvas() {
+  const canvas = document.getElementById('bg-canvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  const stars = Array.from({length:200}, () => ({
+    x: Math.random()*canvas.width,
+    y: Math.random()*canvas.height,
+    r: Math.random()*1.5+0.3,
+    speed: Math.random()*0.3+0.05,
+    opacity: Math.random()*0.8+0.2,
+    twinkle: Math.random()*Math.PI*2
+  }));
+
+  const nebulas = [
+    { x:canvas.width*0.2, y:canvas.height*0.3, r:300, c:'rgba(0,245,255,0.025)' },
+    { x:canvas.width*0.8, y:canvas.height*0.7, r:250, c:'rgba(255,0,255,0.02)' },
+    { x:canvas.width*0.5, y:canvas.height*0.5, r:200, c:'rgba(255,238,0,0.015)' },
+  ];
+
+  let t = 0;
+  function draw() {
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    nebulas.forEach(n => {
+      const g = ctx.createRadialGradient(n.x,n.y,0,n.x,n.y,n.r);
+      g.addColorStop(0,n.c); g.addColorStop(1,'transparent');
+      ctx.fillStyle = g; ctx.beginPath();
+      ctx.arc(n.x,n.y,n.r,0,Math.PI*2); ctx.fill();
+    });
+    stars.forEach(s => {
+      s.twinkle += 0.02;
+      const op = s.opacity * (0.6+0.4*Math.sin(s.twinkle));
+      ctx.beginPath();
+      ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+      ctx.fillStyle = `rgba(255,255,255,${op})`;
+      ctx.fill();
+      s.y -= s.speed;
+      if(s.y < 0) { s.y = canvas.height; s.x = Math.random()*canvas.width; }
+    });
+    t++;
+    requestAnimationFrame(draw);
+  }
+  draw();
+  window.addEventListener('resize', () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  });
+}
+
+// ═══════════════════════════════════════
+//         CUSTOM CURSOR
+// ═══════════════════════════════════════
+function initCursor() {
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursor-ring');
+  let mx=0,my=0,rx=0,ry=0;
+  document.addEventListener('mousemove', e => {
+    mx=e.clientX; my=e.clientY;
+    cursor.style.left=(mx-6)+'px'; cursor.style.top=(my-6)+'px';
+  });
+  function animRing() {
+    rx += (mx-rx)*0.12; ry += (my-ry)*0.12;
+    ring.style.left=(rx-18)+'px'; ring.style.top=(ry-18)+'px';
+    requestAnimationFrame(animRing);
+  }
+  animRing();
+  document.querySelectorAll('button,a,[data-clickable]').forEach(el => {
+    el.addEventListener('mouseenter', ()=>{ cursor.style.transform='scale(2)'; ring.style.transform='scale(1.5)'; });
+    el.addEventListener('mouseleave', ()=>{ cursor.style.transform='scale(1)'; ring.style.transform='scale(1)'; });
+  });
+}
+
+// ═══════════════════════════════════════
+//         FLOATING ORBS
+// ═══════════════════════════════════════
+function buildOrbs() {
+  const arena = document.getElementById('float-arena');
+  AI_TOOLS.forEach((tool, i) => {
+    const pos = ORB_POSITIONS[i];
+    const orb = document.createElement('div');
+    orb.className = 'ai-orb';
+    orb.id = 'orb-'+tool.id;
+    orb.style.cssText = `
+      left:${pos.left}%;top:${pos.top}%;
+      animation: float-orb-${i} ${pos.animDur}s ease-in-out infinite alternate;
+    `;
+    const style = document.createElement('style');
+    const dx = (Math.random()-0.5)*60, dy = (Math.random()-0.5)*60;
+    style.textContent = `
+      @keyframes float-orb-${i} {
+        from { transform: translate(0,0) rotate(-2deg); }
+        to { transform: translate(${dx}px,${dy}px) rotate(2deg); }
+      }
+    `;
+    document.head.appendChild(style);
+
+    orb.innerHTML = `
+      <div class="orb-bg" style="background:radial-gradient(circle at 35% 35%,${tool.color}aa,${tool.color2}55);box-shadow:0 0 30px ${tool.color}55,0 0 60px ${tool.color}22;"></div>
+      <div class="orb-pulse" style="border-color:${tool.color};"></div>
+      <div class="orb-icon">${tool.icon}</div>
+      <div class="orb-name">${tool.name.toUpperCase()}</div>
+      <div class="click-hint">[ CLICK TO EXPLORE ]</div>
+    `;
+    orb.addEventListener('click', () => openModal(tool));
+    arena.appendChild(orb);
+  });
+  initLinesCanvas();
+}
+
+// ═══════════════════════════════════════
+//         CONNECTION LINES
+// ═══════════════════════════════════════
+function initLinesCanvas() {
+  const arena = document.getElementById('float-arena');
+  const canvas = document.getElementById('lines-canvas');
+  canvas.width = arena.offsetWidth;
+  canvas.height = arena.offsetHeight;
+  const ctx = canvas.getContext('2d');
+  let t = 0;
+  function drawLines() {
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    const orbs = document.querySelectorAll('.ai-orb');
+    const positions = [];
+    orbs.forEach(orb => {
+      const r = orb.getBoundingClientRect();
+      const ar = arena.getBoundingClientRect();
+      positions.push({ x: r.left - ar.left + r.width/2, y: r.top - ar.top + r.height/2 });
+    });
+    ctx.lineWidth = 0.5;
+    for(let i=0;i<positions.length;i++) {
+      for(let j=i+1;j<positions.length;j++) {
+        const dx=positions[j].x-positions[i].x, dy=positions[j].y-positions[i].y;
+        const dist=Math.sqrt(dx*dx+dy*dy);
+        if(dist<220) {
+          const alpha = (1-dist/220)*0.3;
+          const pulse = 0.5+0.5*Math.sin(t*0.05+(i+j));
+          ctx.strokeStyle = `rgba(0,245,255,${alpha*pulse})`;
+          ctx.beginPath();
+          ctx.moveTo(positions[i].x,positions[i].y);
+          ctx.lineTo(positions[j].x,positions[j].y);
+          ctx.stroke();
+        }
+      }
+    }
+    t++;
+    requestAnimationFrame(drawLines);
+  }
+  drawLines();
+}
+
+// ═══════════════════════════════════════
+//         MODAL
+// ═══════════════════════════════════════
+function openModal(tool) {
+  document.getElementById('modal-overlay').classList.add('active');
+  document.getElementById('modal-icon-wrap').innerHTML = tool.icon;
+  document.getElementById('modal-icon-wrap').style.background = `linear-gradient(135deg,${tool.color}44,${tool.color2}22)`;
+  document.getElementById('modal-icon-wrap').style.border = `1px solid ${tool.color}66`;
+  document.getElementById('modal-title').textContent = tool.name;
+  document.getElementById('modal-title').style.color = tool.color;
+  document.getElementById('modal-subtitle').textContent = `${tool.company} · ${tool.type} · Est. ${tool.launched}`;
+  buildTabContent(tool);
+  // reset to overview tab
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-overview').classList.add('active');
+  document.querySelector('.tab-btn').classList.add('active');
+}
+
+function closeModal(e) {
+  if(!e || e.target===document.getElementById('modal-overlay') || e.currentTarget===document.querySelector('.modal-close')) {
+    document.getElementById('modal-overlay').classList.remove('active');
+  }
+}
+
+function switchTab(id, btn) {
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  btn.classList.add('active');
+  if(id==='strengths') animateBars();
+  if(id==='visual') startVisual(currentTool);
+}
+
+let currentTool = null;
+function buildTabContent(tool) {
+  currentTool = tool;
+  // OVERVIEW
+  document.getElementById('tab-overview').innerHTML = `
+    <div class="overview-card">${tool.overview}</div>
+    <div class="key-facts">
+      ${tool.facts.map(f=>`<div class="key-fact"><div class="kf-val" style="color:${tool.color}">${f.val}</div><div class="kf-label">${f.label}</div></div>`).join('')}
+    </div>
+  `;
+
+  // STRENGTHS
+  document.getElementById('tab-strengths').innerHTML = `
+    <div class="strength-grid">
+      ${tool.strengths.map(s=>`
+        <div class="strength-item">
+          <div class="strength-label">${s.label}</div>
+          <div class="strength-value">${s.val}%</div>
+          <div style="clear:both;"></div>
+          <div class="strength-bar-wrap">
+            <div class="strength-bar" data-val="${s.val}" style="background:linear-gradient(90deg,${tool.color},${tool.color2});"></div>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+
+  // AGENTS
+  document.getElementById('tab-agents').innerHTML = `
+    <div class="agents-grid">
+      ${tool.agents.map(a=>`
+        <div class="agent-card">
+          <div class="agent-icon">${a.icon}</div>
+          <div class="agent-name" style="color:${tool.color}">${a.name}</div>
+          <div class="agent-desc">${a.desc}</div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+
+  // CAPABILITIES
+  document.getElementById('tab-capabilities').innerHTML = `
+    <div class="cap-tags">
+      ${tool.capabilities.map(c=>`
+        <div class="cap-tag" style="color:${c.color};border-color:${c.color}44;background:${c.color}11;">
+          ${c.label}
+        </div>
+      `).join('')}
+    </div>
+    <br>
+    <div style="padding:20px;background:var(--glass);border:1px solid var(--border);border-radius:14px;margin-top:10px;font-size:0.85rem;color:var(--muted);line-height:1.7;">
+      <strong style="color:${tool.color};font-family:'Orbitron',monospace;letter-spacing:1px;">AI DOMAIN EXPERTISE</strong><br><br>
+      ${tool.name} operates across ${tool.capabilities.length} core capability domains, making it a versatile tool for modern AI workflows. Each capability has been rigorously developed to handle real-world enterprise and consumer use cases at scale.
+    </div>
+  `;
+
+  // TASKS
+  document.getElementById('tab-tasks').innerHTML = `
+    <div class="task-list">
+      ${tool.tasks.map((task,i)=>`
+        <div class="task-item">
+          <div class="task-num" style="color:${tool.color};border-color:${tool.color}66;">${String(i+1).padStart(2,'0')}</div>
+          <div class="task-text">${task}</div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+
+  // VISUAL
+  document.getElementById('tab-visual').innerHTML = `
+    <div class="visual-display">
+      <canvas class="vcanvas" id="visual-canvas"></canvas>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px;">
+      <div style="padding:16px;background:var(--glass);border:1px solid var(--border);border-radius:12px;text-align:center;">
+        <div style="font-family:'Orbitron',monospace;font-size:0.7rem;color:var(--muted);letter-spacing:1px;margin-bottom:8px;">VISUALIZATION TYPE</div>
+        <div style="font-size:0.9rem;color:${tool.color};font-weight:600;">${tool.visualType.toUpperCase()} RENDER</div>
+      </div>
+      <div style="padding:16px;background:var(--glass);border:1px solid var(--border);border-radius:12px;text-align:center;">
+        <div style="font-family:'Orbitron',monospace;font-size:0.7rem;color:var(--muted);letter-spacing:1px;margin-bottom:8px;">MODEL TYPE</div>
+        <div style="font-size:0.9rem;color:${tool.color};font-weight:600;">${tool.type.toUpperCase()}</div>
+      </div>
+    </div>
+    <br>
+    <button onclick="addToCompare('${tool.id}')" style="width:100%;padding:14px;background:linear-gradient(135deg,${tool.color}22,${tool.color}11);border:1px solid ${tool.color}66;border-radius:12px;color:${tool.color};font-family:'Orbitron',monospace;font-size:0.8rem;cursor:pointer;transition:all 0.2s;letter-spacing:1px;" onmouseover="this.style.background='${tool.color}33'" onmouseout="this.style.background='${tool.color}11'">
+      ⚖️ ADD TO COMPARISON
+    </button>
+  `;
+}
+
+function animateBars() {
+  setTimeout(()=>{
+    document.querySelectorAll('.strength-bar').forEach(bar=>{
+      bar.style.width = bar.dataset.val+'%';
+    });
+  },100);
+}
+
+// ═══════════════════════════════════════
+//         VISUAL CANVAS ANIMATIONS
+// ═══════════════════════════════════════
+let visualAnimId = null;
+function startVisual(tool) {
+  if(visualAnimId) cancelAnimationFrame(visualAnimId);
+  const canvas = document.getElementById('visual-canvas');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  canvas.width = canvas.offsetWidth || 800;
+  canvas.height = canvas.offsetHeight || 280;
+  const W=canvas.width, H=canvas.height;
+  const color = tool.color;
+  let t=0;
+
+  function render() {
+    ctx.fillStyle='#020509';
+    ctx.fillRect(0,0,W,H);
+    if(tool.visualType==='neural') drawNeural(ctx,W,H,t,color);
+    else if(tool.visualType==='wave') drawWave(ctx,W,H,t,color);
+    else if(tool.visualType==='grid') drawGrid(ctx,W,H,t,color);
+    else if(tool.visualType==='hexagon') drawHexagon(ctx,W,H,t,color);
+    else if(tool.visualType==='particles') drawParticles(ctx,W,H,t,color);
+    else if(tool.visualType==='orbit') drawOrbit(ctx,W,H,t,color);
+    else if(tool.visualType==='starfield') drawStarfield(ctx,W,H,t,color);
+    else if(tool.visualType==='flow') drawFlow(ctx,W,H,t,color);
+    else if(tool.visualType==='video') drawVideo(ctx,W,H,t,color);
+    else if(tool.visualType==='spiral') drawSpiral(ctx,W,H,t,color);
+    t++;
+    visualAnimId = requestAnimationFrame(render);
+  }
+  render();
+}
+
+function drawNeural(ctx,W,H,t,c) {
+  const nodes=[];
+  for(let i=0;i<20;i++) nodes.push({x:W*(0.05+0.9*(i%5)/4),y:H*(0.1+0.8*Math.floor(i/5)/3)});
+  nodes.forEach((n,i)=>{
+    nodes.forEach((m,j)=>{ if(j>i&&Math.random()<0.3){
+      const p=0.5+0.5*Math.sin(t*0.05+i+j);
+      ctx.strokeStyle=`${c}${Math.floor(p*80).toString(16).padStart(2,'0')}`;
+      ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(n.x,n.y); ctx.lineTo(m.x,m.y); ctx.stroke();
+    }});
+    const r=3+2*Math.sin(t*0.05+i);
+    const g=ctx.createRadialGradient(n.x,n.y,0,n.x,n.y,r*3);
+    g.addColorStop(0,c); g.addColorStop(1,'transparent');
+    ctx.beginPath(); ctx.arc(n.x,n.y,r,0,Math.PI*2); ctx.fillStyle=g; ctx.fill();
+  });
+  // flowing dots
+  for(let k=0;k<5;k++){
+    const p=(t*0.01+k*0.2)%1;
+    const x=W*p; const y=H/2+Math.sin(t*0.02+k)*60;
+    ctx.beginPath(); ctx.arc(x,y,4,0,Math.PI*2);
+    ctx.fillStyle=c; ctx.fill();
+  }
+}
+
+function drawWave(ctx,W,H,t,c) {
+  for(let i=0;i<5;i++){
+    ctx.beginPath();
+    ctx.moveTo(0,H/2);
+    for(let x=0;x<=W;x+=4){
+      const y=H/2+Math.sin((x/W)*Math.PI*4+t*0.05+i*1.2)*((i+1)*15);
+      ctx.lineTo(x,y);
+    }
+    ctx.strokeStyle=`${c}${(90-i*15).toString(16).padStart(2,'0')}`;
+    ctx.lineWidth=2-i*0.3; ctx.stroke();
+  }
+}
+
+function drawGrid(ctx,W,H,t,c) {
+  const gs=40;
+  ctx.strokeStyle=`${c}22`; ctx.lineWidth=0.5;
+  for(let x=0;x<W;x+=gs){ ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke(); }
+  for(let y=0;y<H;y+=gs){ ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
+  for(let i=0;i<8;i++){
+    const x=W/2+Math.cos(t*0.02+i*Math.PI/4)*120;
+    const y=H/2+Math.sin(t*0.02+i*Math.PI/4)*80;
+    const r=8+4*Math.sin(t*0.05+i);
+    ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2);
+    ctx.fillStyle=c; ctx.fill();
+  }
+}
+
+function drawHexagon(ctx,W,H,t,c) {
+  function hex(cx,cy,r,a){
+    ctx.beginPath();
+    for(let i=0;i<6;i++){const an=a+i*Math.PI/3;ctx.lineTo(cx+r*Math.cos(an),cy+r*Math.sin(an));}
+    ctx.closePath();
+  }
+  for(let i=0;i<12;i++){
+    const r=20+i*10; const angle=t*0.01+i;
+    const cx=W/2+Math.cos(angle)*r*1.5;
+    const cy=H/2+Math.sin(angle)*r;
+    hex(cx,cy,20+i*2,angle);
+    ctx.strokeStyle=`${c}${(80-i*5).toString(16).padStart(2,'0')}`;
+    ctx.lineWidth=1; ctx.stroke();
+  }
+}
+
+const PDATA = Array.from({length:80},()=>({x:Math.random()*800,y:Math.random()*280,vx:(Math.random()-0.5)*2,vy:(Math.random()-0.5)*2,life:Math.random()}));
+function drawParticles(ctx,W,H,t,c) {
+  PDATA.forEach(p=>{
+    p.x+=p.vx; p.y+=p.vy;
+    if(p.x<0||p.x>W)p.vx*=-1;
+    if(p.y<0||p.y>H)p.vy*=-1;
+    const r=2+2*Math.sin(t*0.05+p.life*10);
+    ctx.beginPath(); ctx.arc(p.x,p.y,r,0,Math.PI*2);
+    ctx.fillStyle=c; ctx.fill();
+  });
+}
+
+function drawOrbit(ctx,W,H,t,c) {
+  for(let i=0;i<5;i++){
+    const rx=100+i*40, ry=50+i*20;
+    ctx.beginPath();
+    ctx.ellipse(W/2,H/2,rx,ry,i*0.3,0,Math.PI*2);
+    ctx.strokeStyle=`${c}33`; ctx.lineWidth=1; ctx.stroke();
+    const angle=t*0.03*(i%2?1:-1)+i*Math.PI/3;
+    const x=W/2+rx*Math.cos(angle), y=H/2+ry*Math.sin(angle);
+    ctx.beginPath(); ctx.arc(x,y,5,0,Math.PI*2);
+    ctx.fillStyle=c; ctx.fill();
+    ctx.shadowColor=c; ctx.shadowBlur=15;
+    ctx.fill(); ctx.shadowBlur=0;
+  }
+  ctx.beginPath(); ctx.arc(W/2,H/2,15,0,Math.PI*2);
+  const g=ctx.createRadialGradient(W/2,H/2,0,W/2,H/2,30);
+  g.addColorStop(0,c); g.addColorStop(1,'transparent');
+  ctx.fillStyle=g; ctx.fill();
+}
+
+const SFDATA = Array.from({length:150},()=>({x:Math.random()*800,y:Math.random()*280,z:Math.random()*500+1,s:Math.random()}));
+function drawStarfield(ctx,W,H,t,c) {
+  const cx=W/2,cy=H/2;
+  SFDATA.forEach(s=>{
+    s.z-=2;
+    if(s.z<=0){s.z=500;s.x=Math.random()*800;s.y=Math.random()*280;}
+    const sx=(s.x-cx)*(500/s.z)+cx, sy=(s.y-cy)*(500/s.z)+cy;
+    const r=Math.max(0.5,(1-s.z/500)*3);
+    ctx.beginPath(); ctx.arc(sx,sy,r,0,Math.PI*2);
+    ctx.fillStyle=`${c}${Math.floor((1-s.z/500)*255).toString(16).padStart(2,'0')}`; ctx.fill();
+  });
+}
+
+function drawFlow(ctx,W,H,t,c) {
+  for(let k=0;k<20;k++){
+    ctx.beginPath();
+    ctx.moveTo(0,(k+1)*(H/21));
+    for(let x=0;x<=W;x+=8){
+      const y=(k+1)*(H/21)+Math.sin(x/60+t*0.03+k*0.5)*20;
+      ctx.lineTo(x,y);
+    }
+    ctx.strokeStyle=`${c}${(20+k*4).toString(16).padStart(2,'0')}`;
+    ctx.lineWidth=1; ctx.stroke();
+  }
+}
+
+function drawVideo(ctx,W,H,t,c) {
+  for(let i=0;i<16;i++){
+    const cols=4; const r=i%cols, col=Math.floor(i/cols);
+    const fw=W/cols-10, fh=H/4-10;
+    const x=r*(fw+10)+5, y=col*(fh+10)+5;
+    const progress=(t*2+i*20)%255;
+    ctx.fillStyle=`rgba(${hexToRgb(c)},${progress/1500})`; ctx.fillRect(x,y,fw,fh);
+    ctx.strokeStyle=`${c}44`; ctx.lineWidth=1; ctx.strokeRect(x,y,fw,fh);
+    if(Math.floor(t/30)%16===i){
+      ctx.fillStyle=c+'44'; ctx.fillRect(x,y,fw,fh);
+    }
+  }
+}
+
+function drawSpiral(ctx,W,H,t,c) {
+  ctx.beginPath();
+  for(let i=0;i<300;i++){
+    const angle=0.1*i+t*0.02;
+    const r=i*0.8;
+    const x=W/2+r*Math.cos(angle), y=H/2+r*Math.sin(angle)*0.6;
+    if(i===0)ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  }
+  ctx.strokeStyle=c+'88'; ctx.lineWidth=1.5; ctx.stroke();
+}
+
+function hexToRgb(hex){
+  const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
+  return `${r},${g},${b}`;
+}
+
+// ═══════════════════════════════════════
+//         GRID CARDS
+// ═══════════════════════════════════════
+function buildGrid() {
+  const grid = document.getElementById('tools-grid');
+  AI_TOOLS.forEach(tool=>{
+    const card = document.createElement('div');
+    card.className = 'tool-card';
+    card.id='card-'+tool.id;
+    card.style.cssText=`border-color:${tool.color}33;`;
+    card.innerHTML=`
+      <style>.tool-card#card-${tool.id}:hover{box-shadow:0 8px 40px ${tool.color}33;border-color:${tool.color}77;}
+      .tool-card#card-${tool.id}::before{background:radial-gradient(ellipse at top left,${tool.color}08,transparent);}</style>
+      <div class="tc-header">
+        <div class="tc-icon">${tool.icon}</div>
+        <div>
+          <div class="tc-name" style="color:${tool.color}">${tool.name}</div>
+          <div class="tc-company">${tool.company}</div>
+        </div>
+      </div>
+      <div class="tc-desc">${tool.overview.slice(0,120)}...</div>
+      <div class="tc-tags">
+        ${tool.tags.map(tag=>`<div class="tc-tag" style="background:${tool.color}22;color:${tool.color};border:1px solid ${tool.color}44;">${tag}</div>`).join('')}
+      </div>
+      <div class="tc-cta" style="color:${tool.color}">
+        <span>EXPLORE FULL DETAILS</span>
+        <span>→</span>
+      </div>
+    `;
+    card.addEventListener('click', ()=>openModal(tool));
+    grid.appendChild(card);
+  });
+}
+
+// ═══════════════════════════════════════
+//         SEARCH / FILTER
+// ═══════════════════════════════════════
+function filterOrbs(query) {
+  const q = query.toLowerCase();
+  AI_TOOLS.forEach(tool=>{
+    const orb = document.getElementById('orb-'+tool.id);
+    const card = document.getElementById('card-'+tool.id);
+    const match = tool.name.toLowerCase().includes(q) ||
+                  tool.company.toLowerCase().includes(q) ||
+                  tool.tags.some(t=>t.toLowerCase().includes(q)) ||
+                  tool.type.toLowerCase().includes(q);
+    if(orb) orb.style.opacity = q===''||match ? '1' : '0.15';
+    if(card) card.style.opacity = q===''||match ? '1' : '0.2';
+  });
+}
+
+// ═══════════════════════════════════════
+//         COMPARE
+// ═══════════════════════════════════════
+function addToCompare(toolId) {
+  if(compareList.includes(toolId)) { showToast('Already added!'); return; }
+  if(compareList.length>=3) { showToast('Max 3 tools to compare'); return; }
+  compareList.push(toolId);
+  updateCompareStrip();
+  showToast('Added to comparison!');
+  closeModal();
+}
+
+function updateCompareStrip() {
+  const strip = document.getElementById('compare-strip');
+  const items = document.getElementById('compare-items');
+  items.innerHTML = compareList.map(id=>{
+    const t=AI_TOOLS.find(t=>t.id===id);
+    return `<div class="compare-item-tag">${t.icon} ${t.name}<button onclick="removeFromCompare('${id}')">✕</button></div>`;
+  }).join('');
+  strip.classList.toggle('visible', compareList.length>0);
+}
+
+function removeFromCompare(id) {
+  compareList = compareList.filter(c=>c!==id);
+  updateCompareStrip();
+}
+
+function toggleCompare() {
+  if(compareList.length>0) showComparison();
+  else showToast('Click tools in Visual tab → Add to Comparison');
+}
+
+function showComparison() {
+  if(compareList.length<2){ showToast('Add at least 2 tools to compare'); return; }
+  const tools = compareList.map(id=>AI_TOOLS.find(t=>t.id===id));
+  const attrs = ['Type','Users','Launched','Top Strength','Context Window'];
+  const vals = [
+    tools.map(t=>t.type),
+    tools.map(t=>t.users),
+    tools.map(t=>t.launched),
+    tools.map(t=>t.strengths[0].label),
+    tools.map(t=>t.facts[1]?.val||'N/A'),
+  ];
+  document.getElementById('compare-content').innerHTML=`
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th>ATTRIBUTE</th>
+          ${tools.map(t=>`<th style="color:${t.color}">${t.icon} ${t.name}</th>`).join('')}
+        </tr>
+      </thead>
+      <tbody>
+        ${attrs.map((a,i)=>`
+          <tr>
+            <td style="color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:0.75rem;letter-spacing:1px;">${a}</td>
+            ${vals[i].map((v,j)=>`<td style="color:${tools[j].color}">${v}</td>`).join('')}
+          </tr>
+        `).join('')}
+        ${tools[0].strengths.map((s,si)=>`
+          <tr>
+            <td style="color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:0.75rem;">${s.label}</td>
+            ${tools.map(t=>{
+              const sv=t.strengths[si];
+              return `<td><div style="display:flex;align-items:center;gap:8px;"><div style="width:60px;height:6px;background:#111;border-radius:3px;overflow:hidden;"><div style="width:${sv?sv.val:0}%;height:100%;background:${t.color};border-radius:3px;"></div></div><span style="color:${t.color};font-family:'Orbitron',monospace;font-size:0.7rem;">${sv?sv.val:0}%</span></div></td>`;
+            }).join('')}
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+  `;
+  document.getElementById('compare-modal').classList.add('active');
+}
+
+function closeCompareModal(e) {
+  if(!e || e.target===document.getElementById('compare-modal')) {
+    document.getElementById('compare-modal').classList.remove('active');
+  }
+}
+
+// ═══════════════════════════════════════
+//         TOAST
+// ═══════════════════════════════════════
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  setTimeout(()=>toast.classList.remove('show'),2500);
+}
+
+// ═══════════════════════════════════════
+//         COPY PROMPT
+// ═══════════════════════════════════════
+function copyPrompt() {
+  const text = document.getElementById('prompt-text').textContent;
+  navigator.clipboard.writeText(text).then(()=>showToast('Prompt copied!'));
+}
+
+// ═══════════════════════════════════════
+//         INIT
+// ═══════════════════════════════════════
+window.addEventListener('load', ()=>{
+  initBgCanvas();
+  initCursor();
+  buildOrbs();
+  buildGrid();
+  setTimeout(()=>{
+    const loader = document.getElementById('loader');
+    loader.style.opacity='0';
+    setTimeout(()=>loader.style.display='none',500);
+  },1800);
+});
+
+window.addEventListener('keydown', e=>{ if(e.key==='Escape'){ closeModal(); closeCompareModal(); }});
+</script>
+</body>
+</html>
